@@ -1,0 +1,27 @@
+version: "2.0"
+services:
+  lingkldap:
+    image: quay.io/lingkio/lingkadapter-ldap:latest
+    ports:
+      - "389:389"
+    labels:
+      com.engie.name: "Lingk LDAP auth"
+    container_name: lingkldap
+    tty: true
+    stdin_open: true
+
+  lingksync:
+    image: quay.io/lingkio/lingkadapter-lingksync:latest
+    ports:
+      - "9000:9000"
+      - "8083:443"
+      - "3000:3000"
+    links:
+      - lingkldap
+    depends_on:
+      - lingkldap
+    labels:
+      io.lingk.name: "Lingk LingkSync"
+    container_name: lingksync
+    tty: true
+    stdin_open: true
