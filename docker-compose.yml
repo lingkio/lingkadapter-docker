@@ -14,7 +14,8 @@ services:
     image: quay.io/lingkio/lingkadapter-lingksync:latest
     ports:
       - "9000:9000"
-      - "8083:443"
+      - "443:443"
+      - "80:80"
       - "3000:3000"
     links:
       - lingkldap
