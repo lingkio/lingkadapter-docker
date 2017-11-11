@@ -13,10 +13,8 @@
 # lingkadapter-install.log
 
 # Run as root, of course.
-# Insert code here to print error message and exit if not root.
 
 LOG_FILE=lingkadapter-install.log
-FILE_LOC=/tmp/
 
 echo "Installation started " `date -u` > $LOG_FILE
 which docker
@@ -31,7 +29,8 @@ then
         echo "install docker" | tee -a $LOG_FILE
     fi
 else
-    echo "install docker" >&2
+    echo "ERROR: docker not found. Please install docker and retry" | tee -a $LOG_FILE
+    exit 1
 fi
 
 ADAPTER_FILE="lingksync.tar.gz"
@@ -71,4 +70,5 @@ echo "installing docker containers from loaded images..."$dockfile | tee -a $LOG
 
 echo "Installation ended " `date -u` >> $LOG_FILE
 echo "Installation ended - check log file for details " $LOG_FILE
+exit 0
 
