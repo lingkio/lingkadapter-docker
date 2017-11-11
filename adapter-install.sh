@@ -1,9 +1,8 @@
 #!/bin/bash
 # Installation script for lingk adapter
-# Asks for 3 inputs
+# Asks for 2 inputs
 # 1: path of lingksync file
 # 2: path of lingk ldap file
-# 3: path of docker-compose.yml
 
 # How to run
 # chmod 755 adapter-install.sh
