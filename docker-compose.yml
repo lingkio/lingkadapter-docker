@@ -1,7 +1,7 @@
 version: "2.0"
 services:
   lingkldap:
-    image: quay.io/lingkio/lingkadapter-ldap:latest
+    image: lingkadapter-ldap:latest
     ports:
       - "389:389"
     labels:
@@ -11,7 +11,7 @@ services:
     stdin_open: true
 
   lingksync:
-    image: quay.io/lingkio/lingkadapter-lingksync:latest
+    image: lingkadapter-lingksync:latest
     ports:
       - "9000:9000"
       - "443:443"
