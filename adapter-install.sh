@@ -15,6 +15,16 @@
 
 LOG_FILE=lingkadapter-install.log
 
+error() {
+  printf '\E[31m'; echo "$@"; printf '\E[0m'
+  echo "$@" >> $LOG_FILE
+}
+
+if [[ $EUID -eq 0 ]]; then
+    error "This script should not be run using sudo or as the root user"
+    exit 1
+fi
+
 echo "Installation started " `date -u` > $LOG_FILE
 echo "checking docker installation..." | tee -a $LOG_FILE
 which docker
@@ -25,11 +35,10 @@ then
     then
         echo "docker exists" | tee -a $LOG_FILE
     else
-        echo "install docker" | tee -a $LOG_FILE
+        error ""ERROR: docker not found. Please install docker and retry"
     fi
 else
-    echo "ERROR: docker not found. Please install docker and retry" | tee -a $LOG_FILE
-    exit 1
+    error ""ERROR: docker not found. Please install docker and retry"
 fi
 
 echo "checking docker-compose installation..." | tee -a $LOG_FILE
@@ -42,11 +51,10 @@ then
     then
         echo "docker-compose exists" | tee -a $LOG_FILE
     else
-        echo "ERROR: docker-compose not found. Please install docker and retry" | tee -a $LOG_FILE
+        error "ERROR: docker-compose not found. Please install docker and retry"
     fi
 else
-    echo "ERROR: docker-compose not found. Please install docker-compose and retry" | tee -a $LOG_FILE
-    exit 1
+    error "ERROR: docker-compose not found. Please install docker-compose and retry"
 fi
 
 ADAPTER_FILE="lingksync.tar.gz"
@@ -59,11 +67,13 @@ echo "Entered file path: "$adapter >> $LOG_FILE
 echo "Enter path of Lingk ldap file" | tee -a $LOG_FILE
 read ldap
 echo "Entered file path: "$ldap >> $LOG_FILE
+
+# docker-compose can either be read from remote location or one that is downloaded as part of repository can be used
+# option1: download from remote location
 #echo "Enter location of the docker-compose file" | tee -a $LOG_FILE
 #read dockfile 
 #echo "Entered file path: "$dockfile >> $LOG_FILE
-
-# Above can be uncommented to take input from the user itself for dockerfile
+# option2: use the one downloaded with repository
 dockerfile="docker-compose.yml"
 
 mkdir ./downloaded
@@ -72,8 +82,9 @@ echo "downloading "$ADAPTER_FILE " from "$adapter"..." | tee -a $LOG_FILE
 wget -O ./downloaded/$ADAPTER_FILE $adapter 2>> $LOG_FILE
 echo "downloading "$LDAP_FILE " from "$ldap"..." | tee -a $LOG_FILE
 wget -O ./downloaded/$LDAP_FILE $ldap 2>> $LOG_FILE 
-echo "downloading "$DOCKER_FILE" from "$dockfile"..." | tee -a $LOG_FILE
-wget -O ./downloaded/$DOCKER_FILE $dockfile 2>> $LOG_FILE
+# Uncomment below lines if option1 is used i.e. docker-file downloaded from remote location
+#echo "downloading "$DOCKER_FILE" from "$dockfile"..." | tee -a $LOG_FILE
+#wget -O ./downloaded/$DOCKER_FILE $dockfile 2>> $LOG_FILE
 
 echo "loading as docker image:"$adapter | tee -a $LOG_FILE
 docker load < ./downloaded/$ADAPTER_FILE 2>> $LOG_FILE
@@ -81,10 +92,9 @@ docker load < ./downloaded/$ADAPTER_FILE 2>> $LOG_FILE
 echo "loading as docker image:"$ldap | tee -a $LOG_FILE
 docker load < ./downloaded/$LDAP_FILE 2>> $LOG_FILE
 
-echo "installing docker containers from loaded images..."$dockfile | tee -a $LOG_FILE
+echo "installing docker containers from loaded images using "$dockerfile"..." | tee -a $LOG_FILE
 `docker-compose -f $DOCKER_FILE up -d` 2>> $LOG_FILE
 
 echo "Installation ended " `date -u` >> $LOG_FILE
 echo "Installation ended - check log file for details " $LOG_FILE
 exit 0
-
