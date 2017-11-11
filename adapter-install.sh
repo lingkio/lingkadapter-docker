@@ -11,18 +11,21 @@
 # Logs are available here
 # lingkadapter-install.log
 
-# Run as root, of course.
-
 LOG_FILE=lingkadapter-install.log
 
+# General Error Function
 error() {
   printf '\E[31m'; echo "$@"; printf '\E[0m'
   echo "$@" >> $LOG_FILE
 }
 
-if [[ $EUID -eq 0 ]]; then
+# Run as root, of course
+if [ $EUID > 0 ] 
+then
     error "This script should be run using sudo or as the root user"
     exit 1
+else
+   echo "root verified"
 fi
 
 echo "Installation started " `date -u` > $LOG_FILE
@@ -35,10 +38,10 @@ then
     then
         echo "docker exists" | tee -a $LOG_FILE
     else
-        error ""ERROR: docker not found. Please install docker and retry"
+        error "ERROR: docker not found. Please install docker and retry"
     fi
 else
-    error ""ERROR: docker not found. Please install docker and retry"
+    error "ERROR: docker not found. Please install docker and retry"
 fi
 
 echo "checking docker-compose installation..." | tee -a $LOG_FILE
