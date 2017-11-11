@@ -21,7 +21,7 @@ error() {
 }
 
 if [[ $EUID -eq 0 ]]; then
-    error "This script should not be run using sudo or as the root user"
+    error "This script should be run using sudo or as the root user"
     exit 1
 fi
 
