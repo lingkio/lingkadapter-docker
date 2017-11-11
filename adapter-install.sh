@@ -16,8 +16,8 @@
 LOG_FILE=lingkadapter-install.log
 
 echo "Installation started " `date -u` > $LOG_FILE
+echo "checking docker installation..." | tee -a $LOG_FILE
 which docker
-
 if [ $? -eq 0 ]
 then
     docker --version | grep "Docker version" | tee -a $LOG_FILE
@@ -29,6 +29,23 @@ then
     fi
 else
     echo "ERROR: docker not found. Please install docker and retry" | tee -a $LOG_FILE
+    exit 1
+fi
+
+echo "checking docker-compose installation..." | tee -a $LOG_FILE
+which docker-compose
+
+if [ $? -eq 0 ]
+then
+    docker-compose --version | grep "docker-compose version" | tee -a $LOG_FILE
+    if [ $? -eq 0 ]
+    then
+        echo "docker-compose exists" | tee -a $LOG_FILE
+    else
+        echo "ERROR: docker-compose not found. Please install docker and retry" | tee -a $LOG_FILE
+    fi
+else
+    echo "ERROR: docker-compose not found. Please install docker-compose and retry" | tee -a $LOG_FILE
     exit 1
 fi
 
