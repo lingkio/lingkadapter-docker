@@ -20,7 +20,7 @@ error() {
 }
 
 # Run as root, of course
-if [ $EUID > 0 ] 
+if [ "$(id -u)" != "0" ] 
 then
     error "This script should be run using sudo or as the root user"
     exit 1
