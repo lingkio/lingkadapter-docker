@@ -11,7 +11,7 @@ services:
     stdin_open: true
 
   lingksync:
-    image: lingkadapter-lingksync:v11
+    image: lingkadapter-lingksync:v12
     ports:
       - "9000:9000"
       - "443:443"
