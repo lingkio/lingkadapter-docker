@@ -20,13 +20,13 @@ error() {
 }
 
 # Run as root, of course
-if [ "$(id -u)" != "0" ] 
-then
-    error "This script should be run using sudo or as the root user"
-    exit 1
-else
+#if [ "$(id -u)" != "0" ] 
+#then
+#    error "This script should be run using sudo or as the root user"
+#    exit 1
+#else
    echo "root verified"
-fi
+#fi
 
 echo "Installation started " `date -u` > $LOG_FILE
 echo "checking docker installation..." | tee -a $LOG_FILE
